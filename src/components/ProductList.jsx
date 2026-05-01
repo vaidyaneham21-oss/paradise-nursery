@@ -1,33 +1,43 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addItem } from "../redux/CartSlice";
 
 function ProductList() {
-  const plants = [
-    { id: 1, name: "Aloe Vera", price: 10, image: "https://via.placeholder.com/100" },
-    { id: 2, name: "Snake Plant", price: 15, image: "https://via.placeholder.com/100" },
-    { id: 3, name: "Peace Lily", price: 20, image: "https://via.placeholder.com/100" },
-    { id: 4, name: "Spider Plant", price: 12, image: "https://via.placeholder.com/100" },
-    { id: 5, name: "Fern", price: 18, image: "https://via.placeholder.com/100" },
-    { id: 6, name: "Cactus", price: 8, image: "https://via.placeholder.com/100" }
-  ];
+  const dispatch = useDispatch();
 
-  const [cart, setCart] = useState([]);
-
-  const addToCart = (plant) => {
-    setCart([...cart, plant]);
+  const plants = {
+    Indoor: [
+      { id: 1, name: "Aloe Vera", price: 10, image: "https://via.placeholder.com/100" },
+      { id: 2, name: "Snake Plant", price: 15, image: "https://via.placeholder.com/100" }
+    ],
+    Outdoor: [
+      { id: 3, name: "Rose", price: 20, image: "https://via.placeholder.com/100" },
+      { id: 4, name: "Tulip", price: 18, image: "https://via.placeholder.com/100" }
+    ],
+    Succulents: [
+      { id: 5, name: "Cactus", price: 8, image: "https://via.placeholder.com/100" },
+      { id: 6, name: "Jade Plant", price: 12, image: "https://via.placeholder.com/100" }
+    ]
   };
 
   return (
     <div>
-      <h2>Plant List</h2>
+      <h1>Our Plants</h1>
 
-      {plants.map((plant) => (
-        <div key={plant.id}>
-          <img src={plant.image} alt={plant.name} />
-          <h3>{plant.name}</h3>
-          <p>${plant.price}</p>
-          <button onClick={() => addToCart(plant)}>
-            Add to Cart
-          </button>
+      {Object.keys(plants).map((category) => (
+        <div key={category}>
+          <h2>{category}</h2>
+
+          {plants[category].map((plant) => (
+            <div key={plant.id}>
+              <img src={plant.image} alt={plant.name} />
+              <h3>{plant.name}</h3>
+              <p>${plant.price}</p>
+
+              <button onClick={() => dispatch(addItem(plant))}>
+                Add to Cart
+              </button>
+            </div>
+          ))}
         </div>
       ))}
     </div>
