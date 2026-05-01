@@ -1,38 +1,23 @@
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { removeItem, updateQuantity } from "../redux/CartSlice";
 
 function CartItem() {
-  const [cart, setCart] = useState([
-    { id: 1, name: "Aloe Vera", price: 10, quantity: 1 },
-    { id: 2, name: "Snake Plant", price: 15, quantity: 1 }
-  ]);
+  const cart = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
 
-  // Increase quantity
-  const increaseQuantity = (index) => {
-    const updatedCart = [...cart];
-    updatedCart[index].quantity += 1;
-    setCart(updatedCart);
+  const increase = (index) => {
+    dispatch(updateQuantity({ index, amount: 1 }));
   };
 
-  // Decrease quantity (remove if 0)
-  const decreaseQuantity = (index) => {
-    const updatedCart = [...cart];
-
-    if (updatedCart[index].quantity === 1) {
-      removeItem(index); // remove if 1 → 0
-    } else {
-      updatedCart[index].quantity -= 1;
-      setCart(updatedCart);
-    }
+  const decrease = (index) => {
+    dispatch(updateQuantity({ index, amount: -1 }));
   };
 
-  // Remove item completely
-  const removeItem = (index) => {
-    const updatedCart = cart.filter((_, i) => i !== index);
-    setCart(updatedCart);
+  const deleteItem = (index) => {
+    dispatch(removeItem(index));
   };
 
-  // Total price
-  const totalCost = cart.reduce(
+  const totalAmount = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
@@ -41,27 +26,23 @@ function CartItem() {
     <div>
       <h2>Shopping Cart</h2>
 
-      {cart.length === 0 ? (
-        <p>Your cart is empty</p>
-      ) : (
-        cart.map((item, index) => (
-          <div key={index}>
-            <h3>{item.name}</h3>
-            <p>Price: ${item.price}</p>
-            <p>Quantity: {item.quantity}</p>
+      {cart.map((item, index) => (
+        <div key={index}>
+          <h3>{item.name}</h3>
+          <p>${item.price}</p>
+          <p>Quantity: {item.quantity}</p>
 
-            <button onClick={() => increaseQuantity(index)}>+</button>
-            <button onClick={() => decreaseQuantity(index)}>-</button>
-            <button onClick={() => removeItem(index)}>Delete</button>
+          <button onClick={() => increase(index)}>+</button>
+          <button onClick={() => decrease(index)}>-</button>
+          <button onClick={() => deleteItem(index)}>Delete</button>
 
-            <p>Total: ${item.price * item.quantity}</p>
-          </div>
-        ))
-      )}
+          <p>Total: ${item.price * item.quantity}</p>
+        </div>
+      ))}
 
-      <h3>Grand Total: ${totalCost}</h3>
+      {/* ✅ REQUIRED */}
+      <h2>Total Cart Amount: ${totalAmount}</h2>
 
-      {/* ✅ REQUIRED for full marks */}
       <button onClick={() => alert("Checkout Successful!")}>
         Checkout
       </button>
